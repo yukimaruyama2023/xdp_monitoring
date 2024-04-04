@@ -43,12 +43,17 @@ int udp(struct xdp_md *ctx)
     char *payload = data + sizeof(struct ethhdr) + sizeof(struct iphdr) + sizeof(struct udphdr);
 
     if ((void *)(eth + 1) > data_end) return XDP_PASS;
-    if (eth->h_proto != ETH_P_IP) return XDP_PASS;
+    /* if (eth->h_proto != ETH_P_IP) return XDP_PASS; */
     if ((void *)(ip + 1) > data_end) return XDP_PASS;
     if (ip->protocol != IPPROTO_UDP) return XDP_PASS;
     if ((void *)(udp + 1) > data_end) return XDP_PASS;
     if (udp->dest != htons(PORT_NUM)) return XDP_PASS;
 
+    if ((void *)payload + sizeof(int) > data_end) return XDP_PASS;
+    *(int *)payload = 32;
+    payload += sizeof(int);
+    if ((void *)payload + sizeof(int) > data_end) return XDP_PASS;
+    *(int *)payload = 42;
     swap_src_dst_mac(eth);
     swap_src_dst_ip(ip);
 
