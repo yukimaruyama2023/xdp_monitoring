@@ -35,6 +35,7 @@ static __always_inline void swap_src_dst_ip(struct iphdr *ip)
 SEC("udp_test")
 int udp(struct xdp_md *ctx)
 {
+
     void *data_end = (void *)(long)ctx->data_end; 
     void *data = (void *)(long)ctx->data; 
     struct ethhdr *eth = data;
@@ -52,11 +53,11 @@ int udp(struct xdp_md *ctx)
     if ((void *)(udp + 1) > data_end) return XDP_PASS;
     if (udp->dest != htons(PORT_NUM)) return XDP_PASS;
 
-    for (int i = 0; i < 10; i++) {
-        if ((void *)payload + sizeof(long) > data_end) return XDP_PASS;
-        *(long *)payload = (long)all_cpu_metrics[i];
-        payload += sizeof(long);
-    }
+    /* for (int i = 0; i < 10; i++) { */
+    /*     if ((void *)payload + sizeof(long) > data_end) return XDP_PASS; */
+    /*     *(long *)payload = (long)all_cpu_metrics[i]; */
+    /*     payload += sizeof(long); */
+    /* } */
 
     swap_src_dst_mac(eth);
     swap_src_dst_ip(ip);
